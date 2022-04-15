@@ -1,4 +1,4 @@
-# Cross-Domain Few-Shot Classification via Adversarial Task Augmentation
+# Free-Lunch for Cross-Domain Few-Shot Learning: Style-Aware Episodic Training with Robust Contrastive Learning
 PyTorch implementation of:
 <br>
 [**Free-Lunch for Cross-Domain Few-Shot Learning: Style-Aware Episodic Training with Robust Contrastive Learning**]
@@ -6,7 +6,7 @@ PyTorch implementation of:
 
 ## Abstract
 
-Cross-Domain Few-Shot Learning (CDFSL) aims for training an adaptable model that can learn out-of-domain classes with a handful of samples. Compared to the well-studied few-shot learning problem, the difficulty for CDFSL lies in that the available training data from test tasks is not only extremely limited but also presents severe class differences from training tasks. To tackle this challenge, we propose Style-aware Episodic Training with Robust Contrastive Learning (SET-RCL), which is motivated by the key observation that a remarkable style-shift between tasks from source and target domains plays a negative role in cross-domain generalization. SET-RCL addresses the style-shift from two perspectives: 1) simulating the style distributions of unknown target domains (data perspective); and 2) learning a style-invariant representation (model perspective). Specifically, Style-aware Episodic Training (SET) focuses on manipulating the style distribution of training tasks in the source domain, such that the learned model can achieve better adaption on test tasks with domain-specific styles. To further improve cross-domain generalization under style-shift, we develop Robust Contrastive Learning (RCL) to capture style-invariant and discriminative representations from the manipulated tasks. Notably, our SET-RCL is orthogonal to existing FSL approaches, thus can be adopted as a “free-lunch” for boosting their CDFSL performance. Extensive experiments on nine benchmark datasets and six baseline methods demonstrate the effectiveness of our method.
+Cross-Domain Few-Shot Learning (CDFSL) aims for training an adaptable model that can learn out-of-domain classes with a handful of samples. Compared to the well-tudied few-shot learning problem, the difficulty for CDFSL lies in that the available training data from test tasks is not only extremely limited but also presents severe class differences from training tasks. To tackle this challenge, we propose Style-aware Episodic Training with Robust Contrastive Learning (SET-RCL), which is motivated by the key observation that a remarkable style-shift between tasks from source and target domains plays a negative role in cross-domain generalization. SET-RCL addresses the style-shift from two perspectives: 1) simulating the style distributions of unknown target domains (data perspective); and 2) learning a style-invariant representation (model perspective). Specifically, Style-aware Episodic Training (SET) focuses on manipulating the style distribution of training tasks in the source domain, such that the learned model can achieve better adaption on test tasks with domain-specific styles. To further improve cross-domain generalization under style-shift, we develop Robust Contrastive Learning (RCL) to capture style-invariant and discriminative representations from the manipulated tasks. Notably, our SET-RCL is orthogonal to existing FSL approaches, thus can be adopted as a “free-lunch” for boosting their CDFSL performance. Extensive experiments on nine benchmark datasets and six baseline methods demonstrate the effectiveness of our method. 
 
 ## Dependencies
 * Python >= 3.5
@@ -81,6 +81,7 @@ python train.py --model ResNet10 --method GNN --n_shot 1 --name GNN_1s --train_a
 - Specify the saved model you want to evaluate with `--name`.
 ```
 python test.py --dataset cub --n_shot 5 --model ResNet10 --method GNN --name GNN_5s
+python test.py --dataset cub --n_shot 1 --model ResNet10 --method GNN --name GNN_1s
 ```
 
 ## Note
