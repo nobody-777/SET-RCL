@@ -1,7 +1,7 @@
 # Free-Lunch for Cross-Domain Few-Shot Learning: Style-Aware Episodic Training with Robust Contrastive Learning
 PyTorch implementation of:
 <br>
-[**Free-Lunch for Cross-Domain Few-Shot Learning: Style-Aware Episodic Training with Robust Contrastive Learning**]
+**Free-Lunch for Cross-Domain Few-Shot Learning: Style-Aware Episodic Training with Robust Contrastive Learning**
 <br>
 
 ## Abstract
@@ -66,9 +66,8 @@ We adopt `baseline` pre-training from [CloserLookFewShot](https://github.com/wyh
 python pretrain.py --dataset miniImagenet --name Pretrain --train_aug
 ```
 
-## Training
+## Network Training 
 
-1.Network training
 ```
 python train.py --model ResNet10 --method GNN --n_shot 5 --name GNN_5s --train_aug --p 0.5 --w_s 0.05 --w_m 3.0
 python train.py --model ResNet10 --method GNN --n_shot 1 --name GNN_1s --train_aug --p 0.5 --w_s 0.05 --w_m 3.0
@@ -76,7 +75,7 @@ python train.py --model ResNet10 --method GNN --n_shot 1 --name GNN_1s --train_a
 
 ## Inference
 
-1.Test the trained model on the unseen domains.
+Test the trained model on the unseen domains.
 
 - Specify the target dataset with `--dataset`: `cub`, `cars`, `places`, `plantae`, `CropDiseases`, `EuroSAT`, `ISIC` or `chestX`.
 - Specify the saved model you want to evaluate with `--name`.
