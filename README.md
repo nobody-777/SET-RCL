@@ -68,6 +68,7 @@ python pretrain.py --dataset miniImagenet --name Pretrain --train_aug
 
 ## Network Training 
 
+Train the model on the source dataset mini-ImageNet.
 ```
 python train.py --model ResNet10 --method GNN --n_shot 5 --name GNN_5s --train_aug --p 0.5 --w_s 0.05 --w_m 3.0
 python train.py --model ResNet10 --method GNN --n_shot 1 --name GNN_1s --train_aug --p 0.5 --w_s 0.05 --w_m 3.0
