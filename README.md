@@ -1,28 +1,12 @@
 # Cross-Domain Few-Shot Classification via Adversarial Task Augmentation
 PyTorch implementation of:
 <br>
-[**Cross-Domain Few-Shot Classification via Adversarial Task Augmentation**](http://arxiv.org/abs/2104.14385)
+[**Free-Lunch for Cross-Domain Few-Shot Learning: Style-Aware Episodic Training with Robust Contrastive Learning**]
 <br>
-
-Haoqing Wang, [Zhi-hong Deng](http://www.cis.pku.edu.cn/jzyg/szdw/dzh.htm)
-
-IJCAI 2021 Main Track
 
 ## Abstract
 
-Few-shot classification aims to recognize unseen classes with few labeled samples from each class. Many meta-learning models for few-shot classification elaborately design various task-shared inductive bias (meta-knowledge) to solve such tasks, and achieve impressive performance. However, when there exists the domain shift between the training tasks and the test tasks, the obtained inductive bias fails to generalize across domains, which degrades the performance of the meta-learning models. In this work, we aim to improve the robustness of the inductive bias through task augmentation. Concretely, we consider the worst-case problem around the source task distribution, and propose the adversarial task augmentation method which can generate the inductive bias-adaptive 'challenging' tasks. Our method can be used as a simple plug-and-play module for various meta-learning models, and improve their cross-domain generalization capability. We conduct extensive experiments under the cross-domain setting, using nine few-shot classification datasets: mini-ImageNet, CUB, Cars, Places, Plantae, CropDiseases, EuroSAT, ISIC and ChestX. Experimental results show that our method can effectively improve the few-shot classification performance of the meta-learning models under domain shift, and outperforms the existing works.
-
-## Citation
-
-If you use this code for your research, please cite our paper:
-```
-@article{wang2021cross,
-  title={Cross-Domain Few-Shot Classification via Adversarial Task Augmentation},
-  author={Wang, Haoqing and Deng, Zhi-Hong},
-  journal={arXiv preprint arXiv:2104.14385},
-  year={2021}
-}
-```
+Cross-Domain Few-Shot Learning (CDFSL) aims for training an adaptable model that can learn out-of-domain classes with a handful of samples. Compared to the well-studied few-shot learning problem, the difficulty for CDFSL lies in that the available training data from test tasks is not only extremely limited but also presents severe class differences from training tasks. To tackle this challenge, we propose Style-aware Episodic Training with Robust Contrastive Learning (SET-RCL), which is motivated by the key observation that a remarkable style-shift between tasks from source and target domains plays a negative role in cross-domain generalization. SET-RCL addresses the style-shift from two perspectives: 1) simulating the style distributions of unknown target domains (data perspective); and 2) learning a style-invariant representation (model perspective). Specifically, Style-aware Episodic Training (SET) focuses on manipulating the style distribution of training tasks in the source domain, such that the learned model can achieve better adaption on test tasks with domain-specific styles. To further improve cross-domain generalization under style-shift, we develop Robust Contrastive Learning (RCL) to capture style-invariant and discriminative representations from the manipulated tasks. Notably, our SET-RCL is orthogonal to existing FSL approaches, thus can be adopted as a “free-lunch” for boosting their CDFSL performance. Extensive experiments on nine benchmark datasets and six baseline methods demonstrate the effectiveness of our method.
 
 ## Dependencies
 * Python >= 3.5
@@ -83,67 +67,22 @@ python pretrain.py --dataset miniImagenet --name Pretrain --train_aug
 
 ## Training
 
-1.Train meta-learning models
-
-Set `method` to `MatchingNet`, `RelationNet`, `ProtoNet`, `GNN` or `TPN`. For MatchingNet, RelationNet and TPN models, we set the training shot be 5 for both 1s and 5s evaluation.
+1.Network training
 ```
-python train.py --model ResNet10 --method GNN --n_shot 5 --name GNN_5s --train_aug
-python train.py --model ResNet10 --method TPN --n_shot 5 --name TPN --train_aug
+python train.py --model ResNet10 --method GNN --n_shot 5 --name GNN_5s --train_aug --p 0.5 --w_s 0.05 --w_m 3.0
+python train.py --model ResNet10 --method GNN --n_shot 1 --name GNN_1s --train_aug --p 0.5 --w_s 0.05 --w_m 3.0
 ```
 
-2.Train meta-learning models with feature-wise transformations.
-
-Set `method` to `MatchingNet`, `RelationNet`, `ProtoNet`, `GNN` or `TPN`.
-```
-python train_FT.py --model ResNet10 --method GNN --n_shot 5 --name GNN_FWT_5s --train_aug
-python train_FT.py --model ResNet10 --method TPN --n_shot 5 --name TPN_FWT --train_aug
-```
-
-3.Explanation-guided train meta-learning models.
-
-Set `method` to `RelationNetLRP` or `GNNLRP`.
-```
-python train.py --model ResNet10 --method GNNLRP --n_shot 5 --name GNN_LRP_5s --train_aug
-python train.py --model ResNet10 --method RelationNetLRP --n_shot 5 --name RelationNet_LRP --train_aug
-```
-
-4.Train meta-learning models with Adversarial Task Augmentation.
-
-Set `method` to `MatchingNet`, `RelationNet`, `ProtoNet`, `GNN` or `TPN`.
-```
-python train_ATA.py --model ResNet10 --method GNN --max_lr 80. --T_max 5 --prob 0.5 --n_shot 5 --name GNN_ATA_5s --train_aug
-python train_ATA.py --model ResNet10 --method TPN --max_lr 20. --T_max 5 --prob 0.6 --n_shot 5 --name TPN_ATA --train_aug
-```
-To get the results of the iteration goal without the regularization term, with the sample-wise Euclidean distance regularization term and with the maximum mean discrepancy (MMD) distance regularization term, run
-```
-python train_NR.py --model ResNet10 --method GNN --max_lr 80. --T_max 5 --n_shot 5 --name GNN_NR_5s --train_aug
-python train_Euclid.py --model ResNet10 --method GNN --max_lr 40. --T_max 5 --lamb 1. --n_shot 5 --name GNN_Euclid_5s --train_aug
-python train_MMD.py --model ResNet10 --method GNN --max_lr 80. --T_max 5 --lamb 1. --n_shot 5 --name GNN_MMD_5s --train_aug
-```
-
-## Evaluation and Fine-tuning
+## Inference
 
 1.Test the trained model on the unseen domains.
 
 - Specify the target dataset with `--dataset`: `cub`, `cars`, `places`, `plantae`, `CropDiseases`, `EuroSAT`, `ISIC` or `chestX`.
 - Specify the saved model you want to evaluate with `--name`.
 ```
-python test.py --dataset cub --n_shot 5 --model ResNet10 --method GNN --name GNN_ATA_5s
-python test.py --dataset cub --n_shot 5 --model ResNet10 --method GNN --name GNN_LRP_5s
-```
-
-2.Fine-tuning with linear classifier.
-To get the results of traditional pre-training and fine-tuning, run
-```
-python finetune.py --dataset cub --n_shot 5 --finetune_epoch 50 --model ResNet10 --name Pretrain
-```
-
-3.Fine-tuning the meta-learning models.
-```
-python finetune_ml.py --dataset cub --method GNN --n_shot 5 --finetune_epoch 50 --model ResNet10 --name GNN_ATA_5s
+python test.py --dataset cub --n_shot 5 --model ResNet10 --method GNN --name GNN_5s
 ```
 
 ## Note
-- This code is built upon the implementation from [CloserLookFewShot](https://github.com/wyharveychen/CloserLookFewShot), [CrossDomainFewShot](https://github.com/hytseng0509/CrossDomainFewShot), [cdfsl-benchmark](https://github.com/IBM/cdfsl-benchmark), [few-shot-lrp-guided](https://github.com/SunJiamei/few-shot-lrp-guided) and [TPN-pytorch](https://github.com/csyanbin/TPN-pytorch).
+- This code is built upon the implementation from [Cross-Domain Few-Shot Classification via Adversarial Task Augmentation](https://github.com/Haoqing-Wang/CDFSL-ATA), [CrossNorm and SelfNorm for Generalization under Distribution Shifts](https://github.com/amazon-research/crossnorm-selfnorm).
 - The dataset, model, and code are for non-commercial research purposes only.
-- You only need a GPU with 11G memory for training and fine-tuning all models.
